@@ -98,6 +98,10 @@ public class UserDetails {
 
     private void updateProduct(Scanner scanner) {
         try {
+        	System.out.println("Enter product id:");
+        	long id = scanner.nextLong();
+        	scanner.nextLine();
+        	
             System.out.println("Enter new product name:");
             String name = scanner.nextLine();
             System.out.println("Enter new product price:");
@@ -107,6 +111,8 @@ public class UserDetails {
             scanner.nextLine(); // consume newline
 
             Product updatedProduct = new Product(name, quantity, price);
+            updatedProduct.setPid(id);
+            
             int result = productService.updateProduct(updatedProduct);
             if (result == 1) {
                 System.out.println("Product updated successfully!");

@@ -11,43 +11,59 @@ import com.pms.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
-	
-	@Autowired UserRepo userRepo;
-	
-	@Override
-	public void addRegister(User user) {
-		User usr = userRepo.save(user);
-		// TODO Auto-generated method stub
-		if(usr != null) {
-			System.out.println("User is Register success");
-		} else {
-			System.out.println("User is Not Register");
-		}
-		
-		return;
-	}
+    
+    @Autowired 
+    private UserRepo userRepo;
+    
+    @Override
+    public void addRegister(User user) {
+        try {
+            User savedUser = userRepo.save(user);
+            if (savedUser != null) {
+                System.out.println("User registered successfully.");
+            } else {
+                System.out.println("User registration failed.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error during user registration: " + e.getMessage());
+        }
+    }
 
-	@Override
-	public User verifyUnameAndPwd(String username, String pass) {
-		// TODO Auto-generated method stub
-		Optional<User> byUsername = userRepo.findByUsername(username);
-		User usr = byUsername.get();
-		System.out.println(usr.toString());
-		if(usr.getPassword().equals(pass)) {
-			System.out.println("user is login as the " + (usr.getAdmin()==true? "Admin" : "User" ));
-			return usr;
-		} else {
-		    System.out.println("User not found");
-		}
-		return null; 
-	}
+    @Override
+    public User verifyUnameAndPwd(String username, String pass) {
+        try {
+            Optional<User> userOptional = userRepo.findByUsername(username);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                System.out.println(user.toString());
+                if (user.getPassword().equals(pass)) {
+                    System.out.println("User logged in as " + (user.getAdmin() ? "Admin" : "User"));
+                    return user;
+                } else {
+                    System.out.println("Incorrect password.");
+                }
+            } else {
+                System.out.println("User not found.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error verifying username and password: " + e.getMessage());
+        }
+        return null; 
+    }
 
-	@Override
-	public String forgotPassword(String email) {
-		// TODO Auto-generated method stub
-		Optional<User> byEmail = userRepo.findByEmail(email);
-		User usr = byEmail.get();
-		return usr.getPassword();
-	}
-
+    @Override
+    public String forgotPassword(String email) {
+        try {
+            Optional<User> userOptional = userRepo.findByEmail(email);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                return user.getPassword(); // Consider sending a password reset link instead of returning the password
+            } else {
+                System.out.println("Email not found.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving password: " + e.getMessage());
+        }
+        return null;
+    }
 }
